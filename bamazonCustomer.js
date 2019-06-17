@@ -1,6 +1,7 @@
 // node application 
 
 var mysql = require("mysql"); 
+var inquirer = require("inquirer"); 
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -13,18 +14,33 @@ var connection = mysql.createConnection({
   connection.connect(function(err) {
     if (err) throw err;
     console.log("connected as id " + connection.threadId); 
+    displayItems(); 
   });
 
 //Running this application will first display all of the items available for sale. Include the ids, names, and prices of products for sale.
 
 // Display All Items inside Database and sell an item to customer
 
-connection.query('SELECT * FROM Products', function(err, res){
+var displayItems = function() {
+  connection.query('SELECT * FROM products', function(err, res){
+    if (err) throw err; 
 
+      for (var i = 0; i < res.length; i++) {
+        console.log("Product ID: " + res[i].item_id + "\t" + "Product Name: " + res[i].product_name + "\t" + "Department Name: " + res[i].department_name + "\t" + "Price: " + res[i].price + "\t" + "Stock Quantity: " + res[i].stock_quantity + "\n"); 
+      }
+}); 
 
+// function askQuestions(length) {
+//   inquirer 
+//   .prompt([
+//     {
+//       type: "input", 
+//       name: "purcase_item_id", 
+//       message: "Enter the Id of the product you would like to buy? 'Press C to Exit'"
+//     }
+//   ])
 
-}
-
+// }
 
 
 
@@ -53,3 +69,4 @@ connection.query('SELECT * FROM Products', function(err, res){
 
 // This means updating the SQL database to reflect the remaining quantity.
 // Once the update goes through, show the customer the total cost of their purchase.
+}

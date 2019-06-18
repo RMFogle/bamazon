@@ -15,25 +15,27 @@ How to Start:
 Running bamazonCustomer.js will display all of the items available for sale followed
 by a question 'Enter the ID of the product you want to buy' 
 
-![]()
+![Screenshot_1]()
 
 
 User enters the product ID# and hits enter 
 
-![]()
+![Screenshot_2]()
 
-A second question asks the user 'How many units do you want to buy?' 
+A second question asks the user 'How many units do you want to buy?' User enters the number of units they would like to purchase. If it's more than what's in stock, the user will be notified 'Insufficient Quantity! and then the prompts reset.
 
-![]()
 
-User enters the number of units they would like to purchase. If it's more than what's in stock, the user will be notified 'Insufficient Quantity! and then the prompts reset.
+![Screenshot_3]()
 
-![]()
+and then the prompts reset and you can enter the Id and qty again or shop for something different.
+
+![Screenshot_4]()
 
 Issues: 
     Can't get the function to complete the purchase, update the SQL database to reflect the remaining qty, and display the total cost of their purchase. 
+    When the user enters in a qty thats less than what's in stock I recieve and error 'ER_BAD_FIELD_ERROR: Unknown column 'NaN' in 'field list' 
 
-![]()
+![Screenshot_5]()
 
 
 

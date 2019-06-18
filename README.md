@@ -15,7 +15,7 @@ How to Start:
 Running bamazonCustomer.js will display all of the items available for sale followed
 by a question 'Enter the ID of the product you want to buy' 
 
-![Screenshot_1]()
+![Screenshot_1](images/Screenshot_1.png)
 
 
 User enters the product ID# and hits enter 

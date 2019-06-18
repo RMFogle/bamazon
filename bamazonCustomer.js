@@ -28,45 +28,89 @@ var displayItems = function() {
       for (var i = 0; i < res.length; i++) {
         console.log("Product ID: " + res[i].item_id + "\t" + "Product Name: " + res[i].product_name + "\t" + "Department Name: " + res[i].department_name + "\t" + "Price: " + res[i].price + "\t" + "Stock Quantity: " + res[i].stock_quantity + "\n"); 
       }
+      askQuestions(); 
 }); 
 
-// function askQuestions(length) {
-//   inquirer 
-//   .prompt([
-//     {
-//       type: "input", 
-//       name: "purcase_item_id", 
-//       message: "Enter the Id of the product you would like to buy? 'Press C to Exit'"
-//     }
-//   ])
-
-// }
-
-
-
-
-
-
 // The app should then prompt users with two messages.
-
-
-
 // The first should ask them the ID of the product they would like to buy.
 // The second message should ask how many units of the product they would like to buy.
+var askQuestions = function() {
+  inquirer
+  .prompt([
+    {
+      name: "productID", 
+      type: "input", 
+      message: "Enter the Id of the product you want to buy",
+      validate: function(value) {
+        if (isNaN(value) === false) {
+          return true; 
+        }
+        return false; 
+      }
+    }, {
+      name: "productQuantity",
+      type: "input", 
+      message: "How many units do you want to buy?", 
+      validate: function(value) {
+        if (isNaN(value) === false) {
+          return true; 
+        }
+        return false; 
+      }
+    }]).then(function(answer) {
 
+      // Parses through database for desired product. Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
+      var query = "Select stock_quantity, price, department_name, product_name FROM products WHERE ?"; 
+      connection.query(query, { item_id: answer.productID}, function(err, res) { 
 
+        if (err) throw err; 
 
-// Once the customer has placed the order, your application should check if your store has enough of the product to meet the customer's request.
+        var available_stock = res[0].stock_quantity; 
+        var price_per_unit = res[0].price; 
+        var productSales = res[0].product_name;  
 
+        // Checks inventory 
 
+        if (available_stock >= answer.productQuantity) {
 
-// If not, the app should log a phrase like Insufficient quantity!, and then prevent the order from going through.
+          // Processes request to finish purchase 
 
+          finishPurchase(available_stock, price_per_unit, productSales, answer.productID, answer.productQuantity); 
 
+        } else {
+                  console.log("Insufficient quantity!")
 
-// However, if your store does have enough of the product, you should fulfill the customer's order.
+                  askQuestions(); 
 
+        }
+      }); 
+    }); 
+}; 
 
 // This means updating the SQL database to reflect the remaining quantity.
 // Once the update goes through, show the customer the total cost of their purchase.
+var finishPurchase = function(availableStock, price, productSales, selectedProductID, selectedProductQuantity) {
+    // Update stock qty after purchase is finished 
+    var updateStock = availableStock - selectedProductQuantity; 
+    // Calculates total price for purchase 
+    var totalPrice = price * selectedProductQuantity; 
+    // updates total product sales 
+    var updateProductSales = parseInt(productSales) + parseInt(totalPrice); 
+    // updates stock qty on the mysql database 
+    var query = "UPDATE products SET ? WHERE ?"; 
+    connection.query(query, [{
+      stock_quantity: updateStock, 
+      product_name: updateProductSales 
+    }, {
+      item_id: selectedProductID 
+    }], function(err, res) {
+
+            if (err) throw err; 
+            console.log("Your purchase is complete!"); 
+
+            console.log("Your total amount is: " + totalPrice); 
+
+    }); 
+}; 
+
 }

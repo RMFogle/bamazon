@@ -67,7 +67,6 @@ var askQuestions = function() {
 
         var available_stock = res[0].stock_quantity; 
         var price_per_unit = res[0].price; 
-        var productSales = res[0].product_name;  
 
         // Checks inventory 
 
@@ -75,7 +74,7 @@ var askQuestions = function() {
 
           // Processes request to finish purchase 
 
-          finishPurchase(available_stock, price_per_unit, productSales, answer.productID, answer.productQuantity); 
+          finishPurchase(available_stock, price_per_unit, answer.productID, answer.productQuantity); 
 
         } else {
                   console.log("Insufficient quantity!")
@@ -89,18 +88,15 @@ var askQuestions = function() {
 
 // This means updating the SQL database to reflect the remaining quantity.
 // Once the update goes through, show the customer the total cost of their purchase.
-var finishPurchase = function(availableStock, price, productSales, selectedProductID, selectedProductQuantity) {
+var finishPurchase = function(availableStock, price, selectedProductID, selectedProductQuantity) {
     // Update stock qty after purchase is finished 
     var updateStock = availableStock - selectedProductQuantity; 
     // Calculates total price for purchase 
     var totalPrice = price * selectedProductQuantity; 
-    // updates total product sales 
-    var updateProductSales = parseInt(productSales) + parseInt(totalPrice); 
     // updates stock qty on the mysql database 
     var query = "UPDATE products SET ? WHERE ?"; 
     connection.query(query, [{
-      stock_quantity: updateStock, 
-      product_name: updateProductSales 
+      stock_quantity: updateStock
     }, {
       item_id: selectedProductID 
     }], function(err, res) {
